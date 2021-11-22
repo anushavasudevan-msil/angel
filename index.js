@@ -23,29 +23,32 @@ const userData = [
         
 ]
 
+var responseStatus = ["success","failure"];
+var responseData = "No data found";
+
+function response(resStatus,resData,resCode) { 
+    return JSON.stringify({status:resStatus,data:resData,code:resCode})
+}
+
+
 // app.get();
 // app.post();
 // app.put();
 // app.delete();
 
-
-app.get('/', function (req, res) {
-  res.send("heloo check")
-})
 // get Route
 app.get('/users', function (req, res) {
-  res.send(userData)
+  res.json(userData)
 })
+
 app.get('/users/:userid', function (req, res) {
    const currUser = userData.find(i => i.userid === parseInt(req.params.userid));
-   console.log(req)
    if(!currUser)
-   res.status(404).send(JSON.stringify({status:"Failure",data: "No data found",code:404}));
-   res.send(JSON.stringify({status:"Success",data: currUser,code:200}));
-
+   res.status(404).send(response(responseStatus[1], responseData ,404));
+   res.send(response(responseStatus[0], currUser,200));
   })
  
-//Post
+//Post Route
 
 app.post('/users/create' ,function(req,res) {
     const newUser = {
@@ -57,21 +60,22 @@ app.post('/users/create' ,function(req,res) {
     res.send(userData)
 })
 
-// put
+// put Route
 
 app.put('/users/edit/:userid' ,function(req,res) {
     const user = userData.find(i => i.userid === parseInt(req.params.userid));
     if(!user)
-    res.status(404).send(JSON.stringify({status:"Failure",data: "No data found",code:404}));
+    res.status(404).send(response(responseStatus[1], responseData ,404));
     user.username = req.body.name;
     user.gender = req.body.gender; 
     res.send(userData)
 })
 
+//Delete Route
 app.delete('/users/delete/:userid' ,function(req,res) {
     const user = userData.find(i => i.userid === parseInt(req.params.userid));
     if(!user)
-    res.status(404).send(JSON.stringify({status:"Failure",data: "No data found",code:404}));
+    res.status(404).send(response(responseStatus[1], responseData ,404));
     var index = userData.indexOf(user);
     userData.splice(index,1);
     res.send(userData);
